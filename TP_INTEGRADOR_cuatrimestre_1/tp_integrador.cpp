@@ -34,13 +34,14 @@ void Cargar_lista_de_invitados()
     if (archivo_invitados.is_open())
     {
         string invitado;
-        //system("clear");
         int contador = 0;
+        system("clear");
         while(!archivo_invitados.eof()){ // Este while va recorriendo linea por linea del archivo e imprimiendo por pantalla.
         getline(archivo_invitados,invitado);
         lista_de_invitados[contador] = invitado;
         contador +=1;
         }
+        cout << endl;
         total_de_invitados = contador - 1;
     }
     else
@@ -331,7 +332,6 @@ void Menu()
         }
         else if (seleccion == 3)
         {
-            system("clear");
             cout <<
             "1) Agregar invitados." << endl <<
             "2) Modificar datos de los invitados" << endl << 
