@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include <stdlib.h> //system("clear")
+//#include <stdlib.h>
+//#include <cstdlib>
 #include <string>
 using namespace std;
 
@@ -16,7 +17,7 @@ void Modificar_datos(string invitado, string dato, string valor); //Se le ingres
 void Que_modificar();//Le da la opcion al usuario de lo que puede modificar.
 void Eliminar_invitado();//Solicita un nro de ticket y elimina los datos.
 void Mostrar_asistentes(); //Comprueba quienes confirmaron su asistencia.
-void Menu();
+void Menu();//Un menu para ir accediendio a las funciones
 
 int main ()
 {
@@ -37,12 +38,11 @@ void Cargar_lista_de_invitados()
         int contador = 0;
         system("clear");
         while(!archivo_invitados.eof()){ // Este while va recorriendo linea por linea del archivo e imprimiendo por pantalla.
-        getline(archivo_invitados,invitado);
-        lista_de_invitados[contador] = invitado;
-        contador +=1;
+            getline(archivo_invitados,invitado);
+            lista_de_invitados[contador] = invitado;
+            contador +=1;
         }
-        cout << endl;
-        total_de_invitados = contador - 1;
+        total_de_invitados = contador - 1; //Termina en una linea vacia, asi que le resto uno para trabajar mejor.
     }
     else
     {
@@ -56,14 +56,14 @@ void Cargar_lista_de_invitados()
 void Mostrar_invitados()
 {
     system("clear");
-    cout << "Lista de invitados: \n";
+    cout << "Lista de invitados:" << endl <<
+    "TICKET, APELLIDO Y NOMBRE, DNI, ASISTENCIA\n\n";
     int i = 0;
     while(i < total_de_invitados)
     {
         cout << lista_de_invitados[i] << endl;
         i ++;
     }
-
 }
 
 void Guardar_lista_de_invitados()
@@ -84,6 +84,7 @@ void Guardar_lista_de_invitados()
 
 void Agregar_invitado()
 {
+    system("clear");
     int dni, asistencia_eleccion;
     string invitado, nombre, asistencia, ticket= to_string(total_de_invitados + 1);
     cout << "Apellido y Nombre del invitado: ";
@@ -148,13 +149,12 @@ void Modificar_datos(string invitado, string dato, string valor)
         else // Si es una coma comprueba que dato almacenó.
         {
              if (posicion_dato == 0) // comprueba que ya tiene el dato ticket
-        {
-            
+        {  
             if (dato != "ticket")//Comprueba que el dato a modificar no sea ticket
             {
                 ticket = dato_aux; //Al no ser ticket  conserva el valor anterior
             }
-            else // de ser ticket le asigna el nuevo valor
+            else // de ser ticket el dato a modificar le asigna el nuevo valor
             {
                 ticket = valor;
             }
@@ -208,7 +208,7 @@ void Modificar_datos(string invitado, string dato, string valor)
             }
         }
     }
-        
+    //Recopila los datos viejos y el nuevo y los almacena en la variable globarl.
     lista_de_invitados[posicion_invitado] = ticket + "," + Capitalize(nombre) + "," + dni + "," + asistencia;
     Guardar_lista_de_invitados();
 }
@@ -221,15 +221,18 @@ void Que_modificar(){
     cout << "Ingrese el numero de ticket del invitado del que desea modificar algun dato: " << endl;
     cin >> ticket;
     invitado = lista_de_invitados[ticket-1];
+    system("clear");
     cout << "Usted seleccionó a " + invitado + " asistencia al evento." << endl <<
     "Seleccione que desea modificar:" << endl <<
-    "1) Nombre" << endl << "2)DNI" << endl << "3) Asistencia" << endl;
+    "1) Nombre" << endl << "2) DNI" << endl << "3) Asistencia" << endl;
     cin >> seleccion;
+    system("clear");
     if (seleccion == 1)
     {
         dato = "nombre";
         cout << "Ingrese el nuevo nombre: ";
-        cin >> valor;
+        cin.ignore();
+        getline(cin, valor);
     }
     else if (seleccion == 2)
     {
@@ -252,7 +255,7 @@ void Que_modificar(){
         }
 
     }
-    Modificar_datos(invitado, dato, valor);
+    Modificar_datos(invitado, dato, " " + valor);
 
 }
 
@@ -276,11 +279,14 @@ void Eliminar_invitado()
     lista_de_invitados[ticket-1] = ticket_str;
     Guardar_lista_de_invitados();
     cout << "Eliminado con exito!";
+    
+
+
+    
 }
 
 void Mostrar_asistentes()
 {
-    
     string invitado, total_asistentes = "", asistencia;
     for(int ticket = 0; ticket < total_de_invitados ; ticket ++)
     {
@@ -301,7 +307,7 @@ void Mostrar_asistentes()
         }
     }
     system("clear");
-    cout << "Lista de asistentes: ";
+    cout << "Lista de asistentes: " << endl;
     cout << total_asistentes << endl;
 
 
@@ -312,6 +318,10 @@ void Menu()
     int seleccion = 0;
     while (seleccion != 5)
     {
+        cout << "Precione enter para continuar ... ";
+        cin.ignore();
+        cin.get();
+        system("clear");
         cout << "Bienvenido al programa de organizacion de invitados" << endl <<
         "Seleccione la opcion que desee: " << endl <<
         "1) Ver lista de invitados" << endl <<
@@ -320,7 +330,6 @@ void Menu()
         "4) Limpiar la pantalla" << endl <<
         "5) Salir" << endl <<
         "Opcion: ";
-
         cin >> seleccion;
         if (seleccion == 1)
         {
@@ -332,11 +341,12 @@ void Menu()
         }
         else if (seleccion == 3)
         {
+            system("clear");
             cout <<
-            "1) Agregar invitados." << endl <<
+            "1) Agregar invitados" << endl <<
             "2) Modificar datos de los invitados" << endl << 
             "3) Eliminar un invitado" << endl <<
-            "Opcion: " << endl;
+            "Opcion: ";
             cin >> seleccion;
             if (seleccion == 1)
             {
