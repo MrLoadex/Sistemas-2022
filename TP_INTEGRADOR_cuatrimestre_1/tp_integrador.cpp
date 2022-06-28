@@ -56,7 +56,7 @@ void Mostrar_invitados()
     int invitados_mostrar;
     system("clear");
     cout << "Lista de invitados:" << endl <<
-    "TICKET, APELLIDO Y NOMBRE, DNI, ASISTENCIA\n";
+    "TICKET, APELLIDO Y NOMBRE, DNI, ASISTENCIA\n\n";
     int i = 0;
     while(i < total_de_invitados)//Uso una variable de control para recorrer la lista de invitados
     {
@@ -68,7 +68,7 @@ void Mostrar_invitados()
         i ++;
     }
     invitados_mostrar --;
-    cout << "Usted tiene " << invitados_mostrar << " invitados." << endl;
+    cout << endl << "Usted tiene " << invitados_mostrar << " invitados."<< endl;
 }
 
 void Guardar_lista_de_invitados()
@@ -313,9 +313,9 @@ void Mostrar_asistentes()
         }
     }
     system("clear");
-    cout << "Lista de asistentes: " << endl;
+    cout << "Lista de asistentes: " << endl << endl;
     cout << total_asistentes << endl <<
-    "Hay un total de " << asistentes << " asistentes." << endl;
+    "Hay un total de " << asistentes << " asistentes." << endl << endl;
 
 
 }
