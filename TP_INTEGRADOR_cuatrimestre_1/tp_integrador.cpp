@@ -17,15 +17,12 @@ void Eliminar_invitado();//Solicita un nro de ticket y elimina los datos.
 void Mostrar_asistentes(); //Comprueba quienes confirmaron su asistencia.
 void Menu();//Un menu para ir accediendio a las funciones
 
-int main ()
+void main ()
 {
     Cargar_lista_de_invitados();
     system("clear");
-    //Que_modificar();
-    //Mostrar_invitados();
     Menu();
-    Guardar_lista_de_invitados();  
-    return 0;
+    Guardar_lista_de_invitados();
 }
 
 void Cargar_lista_de_invitados()
@@ -60,12 +57,12 @@ void Mostrar_invitados()
     cout << "Lista de invitados:" << endl <<
     "TICKET, APELLIDO Y NOMBRE, DNI, ASISTENCIA\n";
     int i = 0;
-    while(i < total_de_invitados)
+    while(i < total_de_invitados)//Uso una variable de control para recorrer la lista de invitados
     {
-        if (lista_de_invitados[i] != "ELIMINADO")
+        if (lista_de_invitados[i] != "ELIMINADO")//Compruebo que los invitados no esten eliminados
         {
-            cout << lista_de_invitados[i] << endl;
-            invitados_mostrar ++;
+            cout << lista_de_invitados[i] << endl; //imprimo invitado por invitado
+            invitados_mostrar ++;//Sumo 1 al numero de invitados que voy a mostrar al final
         }
         i ++;
     }
@@ -101,7 +98,7 @@ void Agregar_invitado()
     cin >> dni;
     cout <<"Confirmó asistencia? \n1) Si confirmo. \n2) No confirmo.\n";
     cin >> asistencia_eleccion;
-    if (asistencia_eleccion == 1) //if para saber si asistio o no.
+    if (asistencia_eleccion == 1) //if para saber si confirmo o no asistencia.
     {
         asistencia = "confirmo";
     }
@@ -228,7 +225,7 @@ void Que_modificar(){
     cout << "Ingrese el numero de ticket del invitado del que desea modificar algun dato: " << endl;
     cin >> ticket;
     invitado = lista_de_invitados[ticket-1];
-    if (invitado != "ELIMINADO") //Comprobamos que el invitado no hjaya sido eliminado..
+    if (invitado != "ELIMINADO") //Comprobamos que el invitado no haya sido eliminado..
     {
         system("clear");
         cout << "Usted seleccionó a " + invitado + " asistencia al evento." << endl <<
@@ -268,7 +265,7 @@ void Que_modificar(){
     }
     else//Si el invitado fue eliminado saldra un mensaje informandole
     {
-        cout << "ESTE TICKET FUE ELIMINADO!" << endl << endl << "El invitado debe ser registrado nuevamente" << endl << endl;
+        cout << "ESTE TICKET FUE ELIMINADO!" << endl << endl;
     }
 }
 
@@ -324,9 +321,9 @@ void Mostrar_asistentes()
 
 void Menu()
 {
-    int seleccion = 0;
+    int seleccion = -1;
     bool primer_inicio = true;
-    while (seleccion != 4)
+    while (seleccion != 0)
     {
         if (primer_inicio)
         {
@@ -343,7 +340,7 @@ void Menu()
         "1) Ver lista de invitados" << endl <<
         "2) Ver lista de asistentes" << endl <<
         "3) Modificar lista de invitados" << endl <<
-        "4) Salir" << endl <<
+        "0) Salir" << endl <<
         "Opcion: ";
         cin >> seleccion;
         if (seleccion == 1)
@@ -361,6 +358,7 @@ void Menu()
             "1) Agregar invitados" << endl <<
             "2) Modificar datos de los invitados" << endl << 
             "3) Eliminar un invitado" << endl <<
+            "4) Atras" << endl <<
             "Opcion: ";
             cin >> seleccion;
             if (seleccion == 1)
