@@ -1,7 +1,5 @@
 #include <iostream>
 #include <fstream>
-//#include <stdlib.h>
-//#include <cstdlib>
 #include <string>
 using namespace std;
 
@@ -23,6 +21,8 @@ int main ()
 {
     Cargar_lista_de_invitados();
     system("clear");
+    //Que_modificar();
+    //Mostrar_invitados();
     Menu();
     Guardar_lista_de_invitados();  
     return 0;
@@ -48,22 +48,29 @@ void Cargar_lista_de_invitados()
     {
         ofstream archivo_invitados;
         archivo_invitados.open("invitados.txt");
-        cout << "No se encontró ninguna lista de invitados, se creó una nueva en su lugar.";
+        cout << "No se encontró ninguna lista de invitados, se creó una nueva en su lugar." << endl;
     }
     archivo_invitados.close();
 }
 
 void Mostrar_invitados()
 {
+    int invitados_mostrar;
     system("clear");
     cout << "Lista de invitados:" << endl <<
-    "TICKET, APELLIDO Y NOMBRE, DNI, ASISTENCIA\n\n";
+    "TICKET, APELLIDO Y NOMBRE, DNI, ASISTENCIA\n";
     int i = 0;
     while(i < total_de_invitados)
     {
-        cout << lista_de_invitados[i] << endl;
+        if (lista_de_invitados[i] != "ELIMINADO")
+        {
+            cout << lista_de_invitados[i] << endl;
+            invitados_mostrar ++;
+        }
         i ++;
     }
+    invitados_mostrar --;
+    cout << "Usted tiene " << invitados_mostrar << " invitados." << endl;
 }
 
 void Guardar_lista_de_invitados()
@@ -116,7 +123,7 @@ void Agregar_invitado()
     cout << lista_de_invitados[total_de_invitados];
     total_de_invitados ++;
     Guardar_lista_de_invitados();
-    cout << nombre+ " fue añadido/a a la lista.";
+    cout << nombre+ " fue añadido/a a la lista." << endl;
     
 }
 
@@ -140,7 +147,7 @@ void Modificar_datos(string invitado, string dato, string valor)
 {
     int posicion_dato = 0, posicion_invitado;
     string dato_aux = "", ticket, nombre, dni, asistencia;
-    for(int i = 0; invitado[i]!='\0' ; i++)
+    for(int i = 0; invitado[i]!='\0' ; i++)//Recorre caracter por caracter.
     {
         if(invitado[i] !=',')//Comprueba si el caracter no es una coma
         {
@@ -148,7 +155,7 @@ void Modificar_datos(string invitado, string dato, string valor)
         }
         else // Si es una coma comprueba que dato almacenó.
         {
-             if (posicion_dato == 0) // comprueba que ya tiene el dato ticket
+             if (posicion_dato == 0) // comprueba si tiene el dato " ticket "
         {  
             if (dato != "ticket")//Comprueba que el dato a modificar no sea ticket
             {
@@ -193,7 +200,7 @@ void Modificar_datos(string invitado, string dato, string valor)
                 asistencia = valor;
             }
         }
-        posicion_dato +=1;
+        posicion_dato ++;
         dato_aux = "";
         }
         if (i == invitado.size()-1)// Para guardar la ultima variable tuve que manejar una excepcion, ya qye no hay , al final
@@ -221,62 +228,58 @@ void Que_modificar(){
     cout << "Ingrese el numero de ticket del invitado del que desea modificar algun dato: " << endl;
     cin >> ticket;
     invitado = lista_de_invitados[ticket-1];
-    system("clear");
-    cout << "Usted seleccionó a " + invitado + " asistencia al evento." << endl <<
-    "Seleccione que desea modificar:" << endl <<
-    "1) Nombre" << endl << "2) DNI" << endl << "3) Asistencia" << endl;
-    cin >> seleccion;
-    system("clear");
-    if (seleccion == 1)
+    if (invitado != "ELIMINADO") //Comprobamos que el invitado no hjaya sido eliminado..
     {
-        dato = "nombre";
-        cout << "Ingrese el nuevo nombre: ";
-        cin.ignore();
-        getline(cin, valor);
-    }
-    else if (seleccion == 2)
-    {
-        dato = "dni";
-        cout << "Ingrese el nuevo DNI: ";
-        cin >> valor;
-    }
-    else if (seleccion == 3)
-    {
-        dato = "asistencia";
-        cout << "Confirmó asistencia? \n1)Si \n2)No" << endl;
+        system("clear");
+        cout << "Usted seleccionó a " + invitado + " asistencia al evento." << endl <<
+        "Seleccione que desea modificar:" << endl <<
+        "1) Nombre" << endl << "2) DNI" << endl << "3) Asistencia" << endl;
         cin >> seleccion;
+        system("clear");
         if (seleccion == 1)
         {
-            valor = "confirmo";
+            dato = "nombre";
+            cout << "Ingrese el nuevo nombre: ";
+            cin.ignore();
+            getline(cin, valor);
         }
-        else
+        else if (seleccion == 2)
         {
-            valor = "no confirmo";
+            dato = "dni";
+            cout << "Ingrese el nuevo DNI: ";
+            cin >> valor;
         }
+        else if (seleccion == 3)
+        {
+            dato = "asistencia";
+            cout << "Confirmó asistencia? \n1)Si \n2)No" << endl;
+            cin >> seleccion;
+            if (seleccion == 1)
+            {
+                valor = "confirmo";
+            }
+            else
+            {
+                valor = "no confirmo";
+            }
 
+        }
+        Modificar_datos(invitado, dato, " " + valor);
     }
-    Modificar_datos(invitado, dato, " " + valor);
-
+    else//Si el invitado fue eliminado saldra un mensaje informandole
+    {
+        cout << "ESTE TICKET FUE ELIMINADO!" << endl << endl << "El invitado debe ser registrado nuevamente" << endl << endl;
+    }
 }
 
 void Eliminar_invitado()
 {
     int ticket;
-    string ticket_str;
     system("clear");
     Mostrar_invitados();
     cout << "Seleccione el ticket invitado que desea eliminar: ";
     cin >> ticket;
-    ticket_str = to_string(ticket);
-    if (ticket_str.size() == 1)
-    {
-        ticket_str = "00" + ticket_str;
-    }
-    else if (ticket_str.size() == 2)
-    {
-        ticket_str = "0" + ticket_str;
-    }
-    lista_de_invitados[ticket-1] = ticket_str;
+    lista_de_invitados[ticket-1] = "ELIMINADO";
     Guardar_lista_de_invitados();
     cout << "Eliminado con exito!";
     
@@ -288,6 +291,7 @@ void Eliminar_invitado()
 void Mostrar_asistentes()
 {
     string invitado, total_asistentes = "", asistencia;
+    int asistentes = 0;
     for(int ticket = 0; ticket < total_de_invitados ; ticket ++)
     {
         invitado = lista_de_invitados[ticket];
@@ -301,14 +305,19 @@ void Mostrar_asistentes()
             }
             if (letra == invitado.size()-1)
             {
-                if (asistencia == " confirmo" or asistencia == "confirmo")
-                total_asistentes += lista_de_invitados[ticket] + " asistencia.\n";
+                if (asistencia == " confirmo")
+                {
+                    total_asistentes += lista_de_invitados[ticket] + " asistencia.\n";
+                    asistentes ++;//cuenta los asistentes que hay.
+                }
+                
             }
         }
     }
     system("clear");
     cout << "Lista de asistentes: " << endl;
-    cout << total_asistentes << endl;
+    cout << total_asistentes << endl <<
+    "Hay un total de " << asistentes << " asistentes." << endl;
 
 
 }
@@ -316,19 +325,25 @@ void Mostrar_asistentes()
 void Menu()
 {
     int seleccion = 0;
-    while (seleccion != 5)
+    bool primer_inicio = true;
+    while (seleccion != 4)
     {
-        cout << "Precione enter para continuar ... ";
-        cin.ignore();
-        cin.get();
-        system("clear");
-        cout << "Bienvenido al programa de organizacion de invitados" << endl <<
-        "Seleccione la opcion que desee: " << endl <<
+        if (primer_inicio)
+        {
+            primer_inicio = false;
+        }
+        else
+        {
+            cout << "Precione enter para continuar ... ";
+            cin.ignore();
+            cin.get();
+            system("clear");
+        }
+        cout <<"Seleccione la opcion que desee: " << endl <<
         "1) Ver lista de invitados" << endl <<
         "2) Ver lista de asistentes" << endl <<
         "3) Modificar lista de invitados" << endl <<
-        "4) Limpiar la pantalla" << endl <<
-        "5) Salir" << endl <<
+        "4) Salir" << endl <<
         "Opcion: ";
         cin >> seleccion;
         if (seleccion == 1)
@@ -361,6 +376,10 @@ void Menu()
                 Eliminar_invitado();
             }
         }
-        else { system("clear"); }
+        else
+        {
+            system("clear");
+            cout << "Opcion no valida." << endl;
+        }
     }
 }
