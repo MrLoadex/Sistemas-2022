@@ -17,12 +17,13 @@ void Eliminar_invitado();//Solicita un nro de ticket y elimina los datos.
 void Mostrar_asistentes(); //Comprueba quienes confirmaron su asistencia.
 void Menu();//Un menu para ir accediendio a las funciones
 
-void main ()
+int main ()
 {
     Cargar_lista_de_invitados();
     system("clear");
     Menu();
     Guardar_lista_de_invitados();
+    return 0;
 }
 
 void Cargar_lista_de_invitados()
