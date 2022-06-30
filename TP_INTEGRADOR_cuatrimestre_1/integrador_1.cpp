@@ -335,7 +335,6 @@ void Mostrar_asistentes()
                 cout << "|======|====================================|====|==========|" << endl;     
             }
             cout << "|   "<< ticket << "|" << nombre << "|" << edad << "|" << asistente << "|" << endl;
-
         }
         nro_invitado ++;
     }
