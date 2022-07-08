@@ -3,49 +3,66 @@
 #include <string>
 using namespace std;
 
-typedef string tInvitados[500];
-int total_de_invitados= 0;
+typedef struct{
+    int ticket;
+    string nombre;
+    string apellido;
+    int dni;
+    int edad;
+    int asistente;
+    int control;//Cuando control es 1 significa que es el ultimo
+}tInvitado;
+typedef tInvitado tInvitados[500];
 tInvitados lista_de_invitados = {};
 void Cargar_lista_de_invitados();//Carga las variables globales total_de_invitados y lista_de_invitados.
 void Guardar_lista_de_invitados();//Guarda la informacion modificada en el archivo de texto.
 void Mostrar_invitados(); //Muestra el los invitados por pantalla
 void Agregar_invitado(); //Solicita los datos del invitado, los guarda en la variable total_de_invitados y en el txt. El nro de ticket es asignado por el nro de posicion -1
 string Capitalize(string texto);//Devuelve el texto dado como parametro en Capitalize, se utiliza para el nombre.
-void Modificar_datos(string invitado, string dato, string valor); //Se le ingresa como parametro el dato a modificar y el valor que se le desea asignar
-void Que_modificar();//Le da la opcion al usuario de lo que puede modificar.
+void Modificar_datos(); //Se le ingresa como parametro el dato a modificar y el valor que se le desea asigna
 void Eliminar_invitado();//Solicita un nro de ticket y elimina los datos.
 void Mostrar_asistentes(); //Comprueba quienes confirmaron su asistencia.
 void Menu();//Un menu para ir accediendio a las funciones
+void Menu_modificar();//Submenu para modificar datos.
+void Menu_asistencia();//Submenu para confirmar asistencia.
 
 int main ()
-{
-    Cargar_lista_de_invitados();
+{ 
     system("clear");
+    Cargar_lista_de_invitados();
     Menu();
     Guardar_lista_de_invitados();
-    return 0;
 }
 
 void Cargar_lista_de_invitados()
 {
     ifstream archivo_invitados;
     archivo_invitados.open("invitados.txt");
+    
+    int posicion_lista = 0;//posicion_lista se ira sumando para saber que espacio de memoria tenemos que ocupar en el array lista_de_invitados;
     if (archivo_invitados.is_open())
     {
-        string invitado;
-        int contador = 0;
-        system("clear");
-        while(!archivo_invitados.eof()){ // Este while va recorriendo linea por linea del archivo e imprimiendo por pantalla.
-            getline(archivo_invitados,invitado);
-            lista_de_invitados[contador] = invitado;
-            contador +=1;
+        while (!archivo_invitados.eof())
+        {
+            archivo_invitados >> lista_de_invitados[posicion_lista].ticket;
+            archivo_invitados >> lista_de_invitados[posicion_lista].nombre;
+            archivo_invitados >> lista_de_invitados[posicion_lista].apellido;
+            archivo_invitados >> lista_de_invitados[posicion_lista].dni;
+            archivo_invitados >> lista_de_invitados[posicion_lista].edad;
+            archivo_invitados >> lista_de_invitados[posicion_lista].asistente;
+            archivo_invitados >> lista_de_invitados[posicion_lista].control;
+            posicion_lista ++;//sumo uno para guardar los datos en el siguiente espacio de memoria de lista_de_invitados
         }
-        total_de_invitados = contador - 1; //Termina en una linea vacia, asi que le resto uno para trabajar mejor.
+        if (lista_de_invitados[0].control == 0)
+        {
+            lista_de_invitados[0].control = 1;//Esto evita estar recorriendo todo el array de forma innecesaria.
+        }
     }
-    else
+    else//Si no hay ningun archivo crea uno.
     {
         ofstream archivo_invitados;
         archivo_invitados.open("invitados.txt");
+        lista_de_invitados[0].control = 1;
         cout << "No se encontró ninguna lista de invitados, se creó una nueva en su lugar." << endl;
     }
     archivo_invitados.close();
@@ -53,76 +70,130 @@ void Cargar_lista_de_invitados()
 
 void Mostrar_invitados()
 {
-    int invitados_mostrar;
-    system("clear");
-    cout << "Lista de invitados:" << endl <<
-    "TICKET, APELLIDO Y NOMBRE, DNI, ASISTENCIA\n\n";
-    int i = 0;
-    while(i < total_de_invitados)//Uso una variable de control para recorrer la lista de invitados
+    int posicion_invitado = 0;
+    while (lista_de_invitados[posicion_invitado].control == 1)
     {
-        if (lista_de_invitados[i] != "ELIMINADO")//Compruebo que los invitados no esten eliminados
+        //Convierto los datos de cada usuario en strings Para crear un solo string e imprimirlo en un cuadro.
+        string ticket, nombre, dni, edad, asistente;
+        if (lista_de_invitados[posicion_invitado].ticket < 10)//Para prolijidad de impresion agrego ceros segun corresponda a los tickets
         {
-            cout << lista_de_invitados[i] << endl; //imprimo invitado por invitado
-            invitados_mostrar ++;//Sumo 1 al numero de invitados que voy a mostrar al final
+            ticket = "  00" + to_string(lista_de_invitados[posicion_invitado].ticket) + " ";
         }
-        i ++;
+        else if (lista_de_invitados[posicion_invitado].ticket < 100)
+        {
+            ticket = "  0" + to_string(lista_de_invitados[posicion_invitado].ticket) + " ";
+        }
+        if (lista_de_invitados[posicion_invitado].asistente == 0)
+        {
+            asistente = "    No    ";
+        }
+        else
+        {
+            asistente = "    Si    ";
+        }
+        //Agrego los espacios necesarios a la variable nombre para generar el cuadro que esta abajo
+        nombre = " " + lista_de_invitados[posicion_invitado].nombre + " " +lista_de_invitados[posicion_invitado].apellido;
+        int aux = 22-nombre.size();
+        for(int i = 0; i < aux; i++)
+        {
+            nombre = nombre + " ";
+        }        
+        dni = " " + to_string(lista_de_invitados[posicion_invitado].dni);
+        for(int i = dni.size(); i < 10; i++)
+        {
+            dni += " ";
+        }
+        edad = to_string(lista_de_invitados[posicion_invitado].edad);//Convierto edad en un string
+        if ( stoi(edad) < 100) {edad = " " + edad + " ";} else {edad = " " + edad;}
+        //IMPRIMO UN CUADRO EN CONSOLA (solo estetico)
+        if (posicion_invitado == 0)
+        {
+            system("clear");
+            cout << endl;
+            cout << "==========================================================" << endl;
+            cout << "|TICKET|  NOMBRE Y APELLIDO   |  D.N.I.  |EDAD|ASISTENTE |" << endl;
+            cout << "|======|======================|==========|====|==========|" << endl;     
+        }
+        //Creo un string para imprimir el invitado de forma mas prolija
+        cout << "|"<< ticket << "|" << nombre << "|" << dni <<"|" << edad << "|" << asistente << "|" << endl;
+
+        if (lista_de_invitados[posicion_invitado+1].control == 1)
+        {
+            cout << "|======|======================|==========|====|==========|" << endl;
+        }
+        else
+        {
+            cout << "==========================================================" << endl;
+        }
+        posicion_invitado ++;
     }
-    invitados_mostrar --;
-    cout << endl << "Usted tiene " << invitados_mostrar << " invitados."<< endl;
 }
 
 void Guardar_lista_de_invitados()
 {
-    ofstream archivo_invitados;
-    archivo_invitados.open("invitados.txt");
+    ofstream archivo_invitados("invitados.txt");
     int i = 0;
-    string lista_str;
-    while(i < total_de_invitados)
+    string ticket, nombre, apellido, dni, edad, asistente, control, lista = "";
+    while (lista_de_invitados[i].control == 1)
     {
-        lista_str += lista_de_invitados[i] + "\n";
-        i++;
+        ticket = to_string(lista_de_invitados[i].ticket);
+        nombre = lista_de_invitados[i].nombre;
+        apellido = lista_de_invitados[i].apellido;
+        dni = to_string(lista_de_invitados[i].dni);
+        edad = to_string(lista_de_invitados[i].edad);
+        asistente = to_string(lista_de_invitados[i].asistente);
+        control = to_string(lista_de_invitados[i].control);
+        lista += ticket + " " + nombre + " " + apellido + " " + dni + " " + edad + " " + asistente + " " + control + "\n";
+        i ++;
     }
-    archivo_invitados << lista_str;
+    archivo_invitados << lista;
     archivo_invitados.close();
     cout << "\nLista actualizada con exito!\n";
 }
 
 void Agregar_invitado()
 {
-    system("clear");
-    int dni, asistencia_eleccion;
-    string invitado, nombre, asistencia, ticket= to_string(total_de_invitados + 1);
-    cout << "Apellido y Nombre del invitado: ";
-    cin.ignore();
-    getline(cin, nombre);
-    cout << "DNI (sin puntos ni guones): ";
-    cin >> dni;
-    cout <<"Confirmó asistencia? \n1) Si confirmo. \n2) No confirmo.\n";
-    cin >> asistencia_eleccion;
-    if (asistencia_eleccion == 1) //if para saber si confirmo o no asistencia.
+    int cantidad_invitados = 0;
+    //BUSCO EL ULTIMO INVITADO CARGADO EN EL ARRAY.
+    while (lista_de_invitados[cantidad_invitados].control == 1)
     {
-        asistencia = "confirmo";
+        cantidad_invitados ++;//Mientras entre al ciclo ira sumando invitados.
+    }//Mientras control sea 1 el invitado esta cargado
+    int dni, edad, asistente;
+    string nombre, apellido;
+    //Comprueba si no hay ningun invitado. De ser asi comienza por la posicion 0.
+    if (cantidad_invitados == 1 && lista_de_invitados[0].ticket == 0)
+    {
+        cantidad_invitados = 0;
+        lista_de_invitados[0].ticket = 1;  
     }
+    /*Si cantidad_invitados es 1 existe la posibilidad de que el array este vacio, por lo cual comprueba
+    si ticket tambien es 0, de ser asi significa que el array, y por lo tanto el txt estan vacios, y comienza desde
+    la posicion 0.*/
     else
     {
-        asistencia= "no confirmo";
+        lista_de_invitados[cantidad_invitados].ticket = lista_de_invitados[cantidad_invitados-1].ticket+1;
     }
-    if (ticket.size() == 1)//Verifica cantidad de digitos de la variable ticket para agregarle 00.
-    {
-        ticket = "00" + ticket;
-    }
-    else if (ticket.size() == 2)
-    {
-       ticket= "0" + ticket; 
-    }
-    nombre = Capitalize(nombre);
-    invitado = ticket+", "+ nombre + ", " + to_string(dni) + ", " + asistencia;
-    lista_de_invitados[total_de_invitados] = invitado;
-    cout << lista_de_invitados[total_de_invitados];
-    total_de_invitados ++;
-    Guardar_lista_de_invitados();
-    cout << nombre+ " fue añadido/a a la lista." << endl;
-    
+    cout << "Nombre (NO utilizar espacios, tildes y la letra ñ): ";
+    cin >> nombre;
+    lista_de_invitados[cantidad_invitados].nombre = nombre;
+    cout << "Apellido (NO utilizar espacios, tildes y la letra ñ): ";
+    cin >> apellido;
+    apellido = Capitalize(apellido);
+    lista_de_invitados[cantidad_invitados].apellido = apellido;
+    cout << "D.N.I.: ";
+    cin >> dni;
+    lista_de_invitados[cantidad_invitados].dni = dni;
+    cout << "Edad: ";
+    cin >> edad;
+    lista_de_invitados[cantidad_invitados].edad = edad;
+    cout << "Confirmo asistencia?" << endl <<
+    "0) No" << endl <<
+    "1) si" << endl <<
+    "Opcion: ";
+    cin >> asistente;
+    lista_de_invitados[cantidad_invitados].asistente = asistente;
+    lista_de_invitados[cantidad_invitados].control = 1;
 }
 
 string Capitalize(string texto)
@@ -141,183 +212,139 @@ string Capitalize(string texto)
 return texto;
 }
 
-void Modificar_datos(string invitado, string dato, string valor)
+void Modificar_datos()
 {
-    int posicion_dato = 0, posicion_invitado;
-    string dato_aux = "", ticket, nombre, dni, asistencia;
-    for(int i = 0; invitado[i]!='\0' ; i++)//Recorre caracter por caracter.
-    {
-        if(invitado[i] !=',')//Comprueba si el caracter no es una coma
-        {
-            dato_aux += invitado[i]; // Si no es una coma lo almacena en dato_aux
-        }
-        else // Si es una coma comprueba que dato almacenó.
-        {
-             if (posicion_dato == 0) // comprueba si tiene el dato " ticket "
-        {  
-            if (dato != "ticket")//Comprueba que el dato a modificar no sea ticket
-            {
-                ticket = dato_aux; //Al no ser ticket  conserva el valor anterior
-            }
-            else // de ser ticket el dato a modificar le asigna el nuevo valor
-            {
-                ticket = valor;
-            }
-            posicion_invitado = stoi(ticket) -1; //Extraiga la posicion del invitado
-        }
-        else if (posicion_dato == 1) // nombre
-        {
-             if (dato != "nombre")
-            {
-                nombre = dato_aux;
-            }
-            else
-            {
-                nombre = valor;
-            }
-        }
-        else if (posicion_dato == 2) //dni
-        {
-             if (dato != "dni")
-            {
-                dni = dato_aux;
-            }
-            else
-            {
-                dni = valor;
-            }
-        }
-        else if (posicion_dato == 3) //asistencia
-        {
-             if (dato != "asistencia")
-            {
-                asistencia = dato_aux;
-            }
-            else
-            {
-                asistencia = valor;
-            }
-        }
-        posicion_dato ++;
-        dato_aux = "";
-        }
-        if (i == invitado.size()-1)// Para guardar la ultima variable tuve que manejar una excepcion, ya qye no hay , al final
-        {
-            if (dato != "asistencia")
-            {
-                asistencia = dato_aux;
-            }
-            else
-            {
-                asistencia = valor;
-            }
-        }
-    }
-    //Recopila los datos viejos y el nuevo y los almacena en la variable globarl.
-    lista_de_invitados[posicion_invitado] = ticket + "," + Capitalize(nombre) + "," + dni + "," + asistencia;
-    Guardar_lista_de_invitados();
-}
-
-void Que_modificar(){
-    int seleccion, ticket;
-    string dato, valor, invitado;
-    system("clear");
+    string nombre;
+    int ticket, valor, opcion, posicion_invitado = 0;
     Mostrar_invitados();
-    cout << "Ingrese el numero de ticket del invitado del que desea modificar algun dato: " << endl;
+    cout << "Ingrese el ticket de quen desee modificar algun dato: ";
     cin >> ticket;
-    invitado = lista_de_invitados[ticket-1];
-    if (invitado != "ELIMINADO") //Comprobamos que el invitado no haya sido eliminado..
+    while (lista_de_invitados[posicion_invitado].control ==1)
     {
-        system("clear");
-        cout << "Usted seleccionó a " + invitado + " asistencia al evento." << endl <<
-        "Seleccione que desea modificar:" << endl <<
-        "1) Nombre" << endl << "2) DNI" << endl << "3) Asistencia" << endl;
-        cin >> seleccion;
-        system("clear");
-        if (seleccion == 1)
-        {
-            dato = "nombre";
-            cout << "Ingrese el nuevo nombre: ";
-            cin.ignore();
-            getline(cin, valor);
-        }
-        else if (seleccion == 2)
-        {
-            dato = "dni";
-            cout << "Ingrese el nuevo DNI: ";
-            cin >> valor;
-        }
-        else if (seleccion == 3)
-        {
-            dato = "asistencia";
-            cout << "Confirmó asistencia? \n1)Si \n2)No" << endl;
-            cin >> seleccion;
-            if (seleccion == 1)
-            {
-                valor = "confirmo";
-            }
-            else
-            {
-                valor = "no confirmo";
-            }
-
-        }
-        Modificar_datos(invitado, dato, " " + valor);
+        if (lista_de_invitados[posicion_invitado].ticket == ticket)
+        ticket = posicion_invitado;
+        posicion_invitado ++;
     }
-    else//Si el invitado fue eliminado saldra un mensaje informandole
+    system("clear");
+    cout << "Que dato desea modificar?" << endl << 
+    "1) Nombre" << endl <<
+    "2) Apellido" << endl <<
+    "3) D.N.I." << endl <<
+    "4) Edad" << endl <<
+    "5) Asistente" << endl;
+    cin >> opcion;
+    if (opcion == 1)
     {
-        cout << "ESTE TICKET FUE ELIMINADO!" << endl << endl;
+        cout << "Nuevo nombre:";
+        cin.ignore();
+        getline(cin, nombre);
+        nombre = Capitalize(nombre);
+        lista_de_invitados[ticket].nombre = nombre;
+    }
+    else if (opcion == 2)
+    {
+        cout << "Nuevo Apellido: ";
+        cin >> valor;
+        lista_de_invitados[ticket].apellido = nombre;
+    }
+    else if (opcion == 3)
+    {
+        cout << "Nueva D.N.I.: ";
+        cin >> valor;
+        lista_de_invitados[ticket].dni = valor;
+    }
+    else if (opcion == 4)
+    {
+        cout << "Nueva edad: ";
+        cin >> valor;
+        lista_de_invitados[ticket].edad = valor;
+    }
+    else if (opcion == 5)
+    {
+        cout << "Confirmo asistencia?" << endl <<
+        "0) No" << endl <<
+        "1) Si" << endl;
+        cin >> valor;
+        lista_de_invitados[ticket].asistente = valor;
     }
 }
 
 void Eliminar_invitado()
 {
-    int ticket;
-    system("clear");
+    int posicion_invitado, ticket, eliminar = 0;
     Mostrar_invitados();
-    cout << "Seleccione el ticket invitado que desea eliminar: ";
+    cout << "Elimine por numero de ticket" << endl;
+    cout << "Ticket: ";
     cin >> ticket;
-    lista_de_invitados[ticket-1] = "ELIMINADO";
-    Guardar_lista_de_invitados();
-    cout << "Eliminado con exito!";
-    
+    posicion_invitado--;
+    while (lista_de_invitados[posicion_invitado].control == 1)
+    {
 
-
-    
+        if (eliminar == 1 || lista_de_invitados[posicion_invitado].ticket == ticket)
+        {
+            eliminar = 1;
+            lista_de_invitados[posicion_invitado] = lista_de_invitados[posicion_invitado+1];
+        }
+        posicion_invitado ++;  
+    } 
 }
 
 void Mostrar_asistentes()
 {
-    string invitado, total_asistentes = "", asistencia;
-    int asistentes = 0;
-    for(int ticket = 0; ticket < total_de_invitados ; ticket ++)
+    string nombre;
+    int nro_invitado = 0, ticket, total_asistentes = 0;
+    cout << "Asistentes: " << endl;
+    while (lista_de_invitados[nro_invitado].control == 1)
     {
-        invitado = lista_de_invitados[ticket];
-
-        for(int letra = 0; invitado[letra]!='\0' ; letra++)
+        if (lista_de_invitados[nro_invitado].asistente == 1)
         {
-            asistencia += invitado[letra];
-            if(invitado[letra] ==',')
+        total_asistentes ++;
+            string ticket, nombre, edad, asistente, dni; //Para prolojidad del codigo, convierto los datos de cada usuario en strings.
+            if (lista_de_invitados[nro_invitado].ticket < 10)//Para prolijidad de impresion agrego ceros segun corresponda a los tickets
             {
-                asistencia = "";
+                ticket = "  00" + to_string(lista_de_invitados[nro_invitado].ticket)+ " ";
             }
-            if (letra == invitado.size()-1)
+            else if (lista_de_invitados[nro_invitado].ticket < 100)
             {
-                if (asistencia == " confirmo")
-                {
-                    total_asistentes += lista_de_invitados[ticket] + " asistencia.\n";
-                    asistentes ++;//cuenta los asistentes que hay.
-                }
-                
+                ticket = "  0" + to_string(lista_de_invitados[nro_invitado].ticket) + " ";
             }
+            if (lista_de_invitados[nro_invitado].asistente == 0)
+            {
+                asistente = "    No    ";
+            }
+            else
+            {
+                asistente = "    Si    ";
+            }
+            nombre = " " + lista_de_invitados[nro_invitado].nombre + " " +lista_de_invitados[nro_invitado].apellido;
+            int aux = 22-nombre.size();
+            for(int i = 0; i < aux; i++)
+            {
+                nombre = nombre + " ";
+            }  
+            dni = " " + to_string(lista_de_invitados[nro_invitado].dni);
+            for(int i = dni.size(); i < 10; i++)
+            {
+                dni += " ";
+            }
+            edad = to_string(lista_de_invitados[nro_invitado].edad);
+            if ( stoi(edad) < 100) {edad = " " + edad + " ";} else {edad = " " + edad;}
+            //IMPRIMO UN CUADRO EN CONSOLA (solo estetico)
+            if (total_asistentes == 1)
+            {
+                system("clear");
+                cout << endl;
+                cout << "==========================================================" << endl;
+                cout << "|TICKET|  NOMBRE Y APELLIDO   |  D.N.I.  |EDAD|ASISTENTE |" << endl;
+                cout << "|======|======================|==========|====|==========|" << endl;       
+            }
+            cout << "|"<< ticket << "|" << nombre << "|" << dni <<"|" << edad << "|" << asistente << "|" << endl;
+
         }
+        nro_invitado ++;
     }
-    system("clear");
-    cout << "Lista de asistentes: " << endl << endl;
-    cout << total_asistentes << endl <<
-    "Hay un total de " << asistentes << " asistentes." << endl << endl;
-
-
+    cout << "==========================================================" << endl;
+    cout << "Al momento " << total_asistentes << " asistentes confirmados." << endl;
 }
 
 void Menu()
@@ -337,13 +364,25 @@ void Menu()
             cin.get();
             system("clear");
         }
-        cout <<"Seleccione la opcion que desee: " << endl <<
-        "1) Ver lista de invitados" << endl <<
-        "2) Ver lista de asistentes" << endl <<
-        "3) Modificar lista de invitados" << endl <<
-        "0) Salir" << endl <<
-        "Opcion: ";
+        cout <<
+        "=============================================" << endl <<
+        "|Seleccione La Opcion Que Desee:            |" << endl <<
+        "|===========================================|" << endl <<
+        "|[1] Ver Invitados                          |" << endl <<
+        "|===========================================|" << endl <<
+        "|[2] Ver Asistentes                         |" << endl <<
+        "|===========================================|" << endl <<
+        "|[3] Agregar Invitado                       |" << endl <<
+        "|===========================================|" << endl <<
+        "|[4] Confirmar Asistente                    |" << endl <<
+        "|===========================================|" << endl <<
+        "|[5] Modificar o Eliminar Invitado          |" << endl <<
+        "|===========================================|" << endl <<
+        "|[0] Salir                                  |" << endl <<
+        "|===========================================|" << endl <<
+        "                Opcion: ";
         cin >> seleccion;
+        system("clear");
         if (seleccion == 1)
         {
             Mostrar_invitados();
@@ -354,31 +393,62 @@ void Menu()
         }
         else if (seleccion == 3)
         {
-            system("clear");
-            cout <<
-            "1) Agregar invitados" << endl <<
-            "2) Modificar datos de los invitados" << endl << 
-            "3) Eliminar un invitado" << endl <<
-            "4) Atras" << endl <<
-            "Opcion: ";
-            cin >> seleccion;
-            if (seleccion == 1)
-            {
-                Agregar_invitado();
-            }
-            else if (seleccion == 2)
-            {
-                Que_modificar();
-            }
-            else if (seleccion == 3)
-            {
-                Eliminar_invitado();
-            }
+            Agregar_invitado();
         }
+        else if (seleccion == 4)
+        {
+            Menu_asistencia();
+        }
+        else if (seleccion == 5)
+        {
+            Menu_modificar();
+        }
+        else if (seleccion == 0)
+            {
+                cout << "Hasta pronto";
+            }
         else
         {
             system("clear");
             cout << "Opcion no valida." << endl;
         }
+    }
+}
+
+void Menu_modificar()
+{
+    int seleccion;
+
+    cout <<
+    "1) Modificar datos de los invitados" << endl << 
+    "2) Eliminar un invitado" << endl <<
+    "3) Atras" << endl <<
+    "Opcion: ";
+    cin >> seleccion;
+    system("clear");
+    if (seleccion == 1)
+    {
+        Modificar_datos();
+    }
+    else if (seleccion == 2)
+    {
+        Eliminar_invitado();
+    }
+    
+}
+
+void Menu_asistencia()
+{
+    Mostrar_invitados();
+    cout << "Seleccione el invitado que desea confirmar asistencia: ";
+    int posicion_invitado = 0, ticket;
+    cin >> ticket;
+    while (lista_de_invitados[posicion_invitado].control == 1)
+    {
+        if (lista_de_invitados[posicion_invitado].ticket == ticket)
+        {
+            lista_de_invitados[posicion_invitado].asistente = 1;
+        }
+        posicion_invitado ++;  
     }
 }
