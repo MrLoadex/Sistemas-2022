@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.tcc": "cpp",
+			"iosfwd": "cpp",
+			"iostream": "cpp"
+		}
+	}
+}
