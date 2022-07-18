@@ -37,8 +37,7 @@ int main ()
 void Cargar_lista_de_invitados()
 {
     ifstream archivo_invitados;
-    archivo_invitados.open("invitados.txt");
-    
+    archivo_invitados.open("invitados.txt");    
     int posicion_lista = 0;//posicion_lista se ira sumando para saber que espacio de memoria tenemos que ocupar en el array lista_de_invitados;
     if (archivo_invitados.is_open())
     {
