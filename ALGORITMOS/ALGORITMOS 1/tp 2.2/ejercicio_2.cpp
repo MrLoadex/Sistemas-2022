@@ -10,7 +10,7 @@ int main ()
     old = 2022 - year;    
     cout <<"Usted tiene " << old << " años de edad." << endl; 
 
-    //Solicita tres numeros e imprime el promedio.
+    //Solicita tres numeros e imprime el promedio. porque es lo que necesito
     double d1,d2,d3, average;
     cout << "Ingrese el dato 1: ";
     cin >> d1;
