@@ -1,0 +1,5 @@
+9 10 8 juan rodriguez
+5 8 7 pedro alcachofa
+6 5 4 mauro vudu
+7 6 9 el romano
+10 9 7 juan francisco
