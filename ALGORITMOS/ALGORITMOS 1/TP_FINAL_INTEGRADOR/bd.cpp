@@ -1,15 +1,15 @@
 #include <iostream>
 //Intente usar <archivo.h> pero tira error al compilar, aunque le pase la direccion.
-#include "./Animal/Animal.h"
-#include "./Animal/Oviparous/Oviparous.h"
-#include "./Animal/Oviparous/Pelican/Pelican.h"
-#include "./Animal/Oviparous/Goose/Goose.h"
-#include "./Animal/Oviparous/Cocodrile/Cocodrile.h"
-#include "Animal/Mammal/Mammal.h"
-#include "./Animal/Mammal/Bat/Bat.h"
-#include "./Animal/Mammal/SeaLion/SeaLion.h"
-#include "./Animal/Mammal/Whale/Whale.h"
-#include "./Zoo/Zoo.h"
+#include <Animal.h>
+#include <Oviparous.h>
+#include <Pelican.h>
+#include <Goose.h>
+#include <Cocodrile.h>
+#include <Mammal.h>
+#include <Bat.h>
+#include <SeaLion.h>
+#include <Whale.h>
+#include <Zoo.h>
 using namespace std;
 
 
