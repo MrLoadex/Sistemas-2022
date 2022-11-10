@@ -1,15 +1,15 @@
 :: Compilo código objeto
-g++ -Wall -std=c++11 -I.\Animal -c .\Animal\Animal.cpp
-g++ -Wall -std=c++11 -I.\Animal\Oviparous -c .\Animal\Oviparous\Oviparous.cpp
-g++ -Wall -std=c++11 -I.\Animal\Oviparous\Cocodrile -c .\Animal\Oviparous\Cocodrile\Cocodrile.cpp
-g++ -Wall -std=c++11 -I.\Animal\Oviparous\Goose -c .\Animal\Oviparous\Goose\Goose.cpp
-g++ -Wall -std=c++11 -I.\Animal\Oviparous\Pelican -c .\Animal\Oviparous\Pelican\Pelican.cpp
-g++ -Wall -std=c++11 -I.\Animal -c .\Animal\Mammal\Mammal.cpp
-g++ -Wall -std=c++11 -I.\Animal -c .\Animal\Mammal\Bat\Bat.cpp
-g++ -Wall -std=c++11 -I.\Animal -c .\Animal\Mammal\SeaLion\SeaLion.cpp
-g++ -Wall -std=c++11 -I.\Animal -c .\Animal\Mammal\Whale\Whale.cpp
-g++ -Wall -std=c++11 -I.\Zoo -c .\Zoo\Zoo.cpp
-g++ -Wall -std=c++11 -I.\ -c .\bd.cpp
+g++ -Wall -std=c++11 -I.\Include -c .\src\Zoo\Animals\Animal.cpp
+g++ -Wall -std=c++11 -I.\Include -c .\src\Zoo\Animals\Oviparous\Oviparous.cpp
+g++ -Wall -std=c++11 -I.\Include -c .\src\Zoo\Animals\Oviparous\Cocodrile\Cocodrile.cpp
+g++ -Wall -std=c++11 -I.\Include -c .\src\Zoo\Animals\Oviparous\Goose\Goose.cpp
+g++ -Wall -std=c++11 -I.\Include -c .\src\Zoo\Animals\Oviparous\Pelican\Pelican.cpp
+g++ -Wall -std=c++11 -I.\Include -c .\src\Zoo\Animals\Mammal\Mammal.cpp
+g++ -Wall -std=c++11 -I.\Include -c .\src\Zoo\Animals\Mammal\Bat\Bat.cpp
+g++ -Wall -std=c++11 -I.\Include -c .\src\Zoo\Animals\Mammal\SeaLion\SeaLion.cpp
+g++ -Wall -std=c++11 -I.\Include -c .\src\Zoo\Animals\Mammal\Whale\Whale.cpp
+g++ -Wall -std=c++11 -I.\Include -c .\src\Zoo\Zoo.cpp
+g++ -Wall -std=c++11 -I.\ -I.\Include\  -c .\bd.cpp
 
 
 :: Compilo el Binario
